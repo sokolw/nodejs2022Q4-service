@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger/dist';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
