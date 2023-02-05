@@ -7,11 +7,8 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/core/guards/auth.guard';
 import { FavsService } from './favs.service';
-import { UseGuards } from '@nestjs/common/decorators';
 
-@UseGuards(AuthGuard)
 @Controller('favs')
 export class FavsController {
   constructor(private favsService: FavsService) {}

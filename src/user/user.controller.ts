@@ -11,7 +11,6 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger/dist';
 import {
   ApiBearerAuth,
@@ -20,7 +19,6 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger/dist/decorators';
-import { AuthGuard } from 'src/core/guards/auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserResponse } from './classes/user-response';
@@ -28,7 +26,6 @@ import { UserService } from './user.service';
 
 @ApiTags('User')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 @Controller()
 export class UserController {
   constructor(private userService: UserService) {}

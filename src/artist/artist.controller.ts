@@ -11,14 +11,11 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common/decorators';
-import { AuthGuard } from 'src/core/guards/auth.guard';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/createArtist.dto';
 import { UpdateArtistDto } from './dto/updateArtist.dto';
 import { Artist } from './interfaces/artist.interface';
 
-@UseGuards(AuthGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private artistService: ArtistService) {}

@@ -15,10 +15,7 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/createAlbum.dto';
 import { Album } from './interfaces/album.interface';
 import { UpdateAlbumDto } from './dto/updateAlbum.dto';
-import { AuthGuard } from 'src/core/guards/auth.guard';
-import { UseGuards } from '@nestjs/common/decorators';
 
-@UseGuards(AuthGuard)
 @Controller('album')
 export class AlbumController {
   constructor(private artistService: AlbumService) {}
