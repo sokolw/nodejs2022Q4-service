@@ -25,7 +25,6 @@ import { UserResponse } from './classes/user-response';
 import { UserService } from './user.service';
 
 @ApiTags('User')
-@ApiBearerAuth()
 @Controller()
 export class UserController {
   constructor(private userService: UserService) {}
