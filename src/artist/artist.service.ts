@@ -1,9 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ArtistRepositoryService } from 'src/core/repository/services/artist-repository.service';
-import { CreateArtistDto } from './dto/createArtist.dto';
+import { CreateArtistDto } from './dto/create-artist.dto';
 import { validate } from 'uuid';
 import { INVALID_ID, ARTIST_NOT_EXIST } from './../core/constants';
-import { UpdateArtistDto } from './dto/updateArtist.dto';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 import { TrackRepositoryService } from 'src/core/repository/services/track-repository.service';
 
 @Injectable()

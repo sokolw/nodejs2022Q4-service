@@ -1,4 +1,4 @@
-import { Artist } from 'src/artist/interfaces/artist.interface';
+import { Artist } from 'src/artist/classes/artist';
 import { Album } from 'src/album/classes/album';
 import { Track } from 'src/track/classes/track';
 
