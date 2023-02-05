@@ -55,7 +55,7 @@ export class AlbumController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request. userId is invalid (not uuid)',
+    description: 'Bad request. albumId is invalid (not uuid)',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -104,7 +104,7 @@ export class AlbumController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request. userId is invalid (not uuid)',
+    description: 'Bad request. albumId is invalid (not uuid)',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -130,7 +130,7 @@ export class AlbumController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request. userId is invalid (not uuid)',
+    description: 'Bad request. albumId is invalid (not uuid)',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,

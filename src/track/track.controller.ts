@@ -55,11 +55,11 @@ export class TrackController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request. userId is invalid (not uuid)',
+    description: 'Bad request. trackId is invalid (not uuid)',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'User not found',
+    description: 'Track not found',
   })
   @Get('/:id')
   async getTrackById(@Param('id') trackId: string): Promise<Track> {
@@ -104,7 +104,7 @@ export class TrackController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request. userId is invalid (not uuid)',
+    description: 'Bad request. trackId is invalid (not uuid)',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -130,7 +130,7 @@ export class TrackController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request. userId is invalid (not uuid)',
+    description: 'Bad request. trackId is invalid (not uuid)',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
