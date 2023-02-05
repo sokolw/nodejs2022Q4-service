@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from '../repository';
 import { v4 as randomId } from 'uuid';
-import { Album } from 'src/album/interfaces/album.interface';
-import { CreateAlbumDto } from 'src/album/dto/createAlbum.dto';
+import { Album } from 'src/album/classes/album';
+import { CreateAlbumDto } from 'src/album/dto/create-album.dto';
 
 @Injectable()
 export class AlbumRepositoryService extends Repository<Album> {

@@ -1,9 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { AlbumRepositoryService } from 'src/core/repository/services/album-repository.service';
-import { CreateAlbumDto } from './dto/createAlbum.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
 import { validate } from 'uuid';
 import { ALBUM_NOT_EXIST, INVALID_ID } from './../core/constants';
-import { UpdateAlbumDto } from './dto/updateAlbum.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
 import { TrackRepositoryService } from 'src/core/repository/services/track-repository.service';
 
 @Injectable()
