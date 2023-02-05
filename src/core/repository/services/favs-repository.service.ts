@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FavoritesResponse } from 'src/favs/interfaces/favorites-response.interface';
+import { FavoritesResponse } from 'src/favs/classes/favorites-response';
 import { AlbumRepositoryService } from './album-repository.service';
 import { ArtistRepositoryService } from './artist-repository.service';
 import { TrackRepositoryService } from './track-repository.service';
