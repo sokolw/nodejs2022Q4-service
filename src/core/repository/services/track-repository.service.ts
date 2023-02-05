@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTrackDto } from 'src/track/dto/createTrack.dto';
-import { Track } from 'src/track/interfaces/track.interface';
+import { CreateTrackDto } from 'src/track/dto/create-track.dto';
+import { Track } from 'src/track/classes/track';
 import { Repository } from '../repository';
 import { v4 as randomId } from 'uuid';
 

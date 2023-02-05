@@ -1,4 +1,4 @@
-import { CreateTrackDto } from './createTrack.dto';
+import { CreateTrackDto } from './create-track.dto';
 
 export class UpdateTrackDto extends CreateTrackDto {
   constructor() {
