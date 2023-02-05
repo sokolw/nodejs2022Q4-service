@@ -7,7 +7,6 @@ import { ArtistModule } from './artist/artist.module';
 import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { CoreModule } from './core/core.module';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { AuthModule } from './auth/auth.module';
     AlbumModule,
     FavsModule,
     CoreModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
