@@ -12,27 +12,90 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common/decorators';
+import { ApiTags } from '@nestjs/swagger/dist';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger/dist/decorators';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UpdatePasswordDto } from './dto/updatePassword.dto';
-import { UserResponse } from './types/user-response.type';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UserResponse } from './classes/user-response';
 import { UserService } from './user.service';
 
+@ApiTags('User')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller()
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @ApiOperation({ summary: 'Get all users', description: 'Get all users' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successful operation',
+    type: UserResponse,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Get('/user')
   async getAllUsers(): Promise<Array<UserResponse>> {
     return this.userService.getAllUsers();
   }
 
+  @ApiOperation({
+    summary: 'Get single user by id',
+    description: 'Get single user by id',
+  })
+  @ApiParam({ name: 'id', required: true, description: 'User identifier' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successful operation',
+    type: UserResponse,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request. userId is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found',
+  })
   @Get('/user/:id')
   async getUserById(@Param('id') userId: string): Promise<UserResponse> {
     return this.userService.getUserById(userId);
   }
 
+  @ApiOperation({
+    summary: 'Creates user',
+    description: 'Creates a new user',
+  })
+  @ApiBody({
+    type: CreateUserDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The user has been created.',
+    type: UserResponse,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request. body does not contain required fields',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Post('/user')
   @UsePipes(new ValidationPipe())
   async createUser(
@@ -41,6 +104,35 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  @ApiOperation({
+    summary: "Update a user's password",
+    description: "Updates a user's password by ID",
+  })
+  @ApiParam({ name: 'id', required: true, description: 'User identifier' })
+  @ApiBody({
+    type: UpdatePasswordDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The user has been updated.',
+    type: UserResponse,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request. userId is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Old password is wrong',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found',
+  })
   @Put('/user/:id')
   @UsePipes(new ValidationPipe())
   async updateUserPassword(
@@ -50,6 +142,28 @@ export class UserController {
     return this.userService.updateUserPassword(userId, updatePasswordDto);
   }
 
+  @ApiOperation({
+    summary: 'Deletes user',
+    description: 'Deletes user by ID.',
+  })
+  @ApiParam({ name: 'id', required: true, description: 'User identifier' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'The user has been deleted',
+    type: UserResponse,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request. userId is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found',
+  })
   @Delete('/user/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') userId: string): Promise<void> {

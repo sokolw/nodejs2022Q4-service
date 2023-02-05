@@ -6,11 +6,11 @@ import {
   USER_NOT_EXIST,
 } from 'src/core/constants';
 import { UserRepositoryService } from 'src/core/repository/services/user-repository.service';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './interfaces/user.interface';
-import { UserResponse } from './types/user-response.type';
+import { UserResponse } from './classes/user-response';
 import { validate } from 'uuid';
-import { UpdatePasswordDto } from './dto/updatePassword.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UserService {
