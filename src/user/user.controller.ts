@@ -37,10 +37,6 @@ export class UserController {
     type: UserResponse,
     isArray: true,
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is missing or invalid',
-  })
   @Get('/user')
   async getAllUsers(): Promise<Array<UserResponse>> {
     return this.userService.getAllUsers();
@@ -59,10 +55,6 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. userId is invalid (not uuid)',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is missing or invalid',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -90,8 +82,8 @@ export class UserController {
     description: 'Bad request. body does not contain required fields',
   })
   @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is missing or invalid',
+    status: HttpStatus.CONFLICT,
+    description: 'Conflict. Login already exists',
   })
   @Post('/user')
   @UsePipes(new ValidationPipe())
@@ -117,10 +109,6 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. userId is invalid (not uuid)',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is missing or invalid',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
@@ -152,10 +140,6 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. userId is invalid (not uuid)',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is missing or invalid',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
