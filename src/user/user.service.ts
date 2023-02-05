@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import {
   INVALID_ID,
+  LOGIN_EXIST,
   OLD_PASSWORD_WRONG,
   USER_NOT_EXIST,
 } from 'src/core/constants';
@@ -35,6 +36,13 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserResponse> {
+    const existUser = this.userRepositoryService.getByLogin(
+      createUserDto.login,
+    );
+    if (existUser) {
+      throw new HttpException({ message: LOGIN_EXIST }, HttpStatus.CONFLICT);
+    }
+
     const passwordHash = await this.getPasswordHash(createUserDto.password);
     const createdUser = this.userRepositoryService.create({
       ...createUserDto,
