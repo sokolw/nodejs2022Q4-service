@@ -135,7 +135,6 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
     description: 'The user has been deleted',
-    type: UserResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
