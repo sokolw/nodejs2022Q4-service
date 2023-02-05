@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/interfaces/user.interface';
-import { Repository } from '../repository.interface';
+import { Repository } from '../repository';
 import { v4 as randomId } from 'uuid';
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
 
 @Injectable()
-export class UserRepositoryService implements Repository<User> {
-  private users: Array<User> = [];
-
-  getAll(): Array<User> {
-    return JSON.parse(JSON.stringify(this.users));
+export class UserRepositoryService extends Repository<User> {
+  constructor() {
+    super();
   }
 
-  getById(id: string): User | null {
-    const user = this.users.find((user) => user.id === id);
+  getByLogin(login: string): User | null {
+    const user = this.data.find((user) => user.login === login);
     if (user) {
       return { ...user };
     }
@@ -29,17 +27,7 @@ export class UserRepositoryService implements Repository<User> {
       createdAt: currentDateInMs,
       updatedAt: currentDateInMs,
     };
-    this.users.push(newUser);
+    this.data.push(newUser);
     return { ...newUser };
-  }
-
-  update(entity: User): User {
-    this.users = this.users.filter((user) => user.id !== entity.id);
-    this.users.push(entity);
-    return { ...entity };
-  }
-
-  delete(id: string): void {
-    this.users = this.users.filter((user) => user.id !== id);
   }
 }
