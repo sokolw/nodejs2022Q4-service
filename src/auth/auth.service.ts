@@ -3,14 +3,18 @@ import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { INVALID_LOGIN_PASSWORD, LOGIN_EXIST } from 'src/core/constants';
 import { UserRepositoryService } from 'src/core/repository/services/user-repository.service';
-import { CreateUserDto } from 'src/user/dto/createUser.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/interfaces/user.interface';
-import { UserResponse } from 'src/user/types/user-response.type';
+import { UserResponse } from 'src/user/classes/user-response';
 import { JwtResponse } from './types/jwt-response';
+import { UserService } from './../user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userRepositoryService: UserRepositoryService) {}
+  constructor(
+    private userRepositoryService: UserRepositoryService,
+    private userService: UserService,
+  ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<void> {
     const existUser = this.userRepositoryService.getByLogin(
@@ -19,11 +23,8 @@ export class AuthService {
     if (existUser) {
       throw new HttpException({ message: LOGIN_EXIST }, HttpStatus.CONFLICT);
     }
-    const passwordHash = await this.getPasswordHash(createUserDto.password);
-    this.userRepositoryService.create({
-      ...createUserDto,
-      password: passwordHash,
-    });
+
+    this.userService.createUser(createUserDto);
   }
 
   async login(loginUserDto: CreateUserDto): Promise<JwtResponse> {
