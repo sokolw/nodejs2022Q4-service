@@ -11,11 +11,14 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common/decorators';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { UserResponse } from './types/user-response.type';
 import { UserService } from './user.service';
 
+@UseGuards(AuthGuard)
 @Controller()
 export class UserController {
   constructor(private userService: UserService) {}
