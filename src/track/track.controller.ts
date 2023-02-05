@@ -90,8 +90,8 @@ export class TrackController {
   }
 
   @ApiOperation({
-    summary: 'Update library track information by UUID',
-    description: 'Update track information',
+    summary: 'Update track information',
+    description: 'Update library track information by UUID',
   })
   @ApiParam({ name: 'id', required: true, description: 'Track identifier' })
   @ApiBody({
