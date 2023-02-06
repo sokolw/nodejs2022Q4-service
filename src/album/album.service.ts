@@ -5,12 +5,14 @@ import { validate } from 'uuid';
 import { ALBUM_NOT_EXIST, INVALID_ID } from './../core/constants';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { TrackRepositoryService } from 'src/core/repository/services/track-repository.service';
+import { ArtistRepositoryService } from 'src/core/repository/services/artist-repository.service';
 
 @Injectable()
 export class AlbumService {
   constructor(
     private albumRepositoryService: AlbumRepositoryService,
     private trackRepositoryService: TrackRepositoryService,
+    private artistRepositoryService: ArtistRepositoryService,
   ) {}
 
   async getAllAlbums() {
@@ -18,7 +20,17 @@ export class AlbumService {
   }
 
   async createAlbum(createAlbumDto: CreateAlbumDto) {
-    return this.albumRepositoryService.create(createAlbumDto);
+    const albumTemporary = createAlbumDto;
+
+    const existArtist = this.artistRepositoryService.getById(
+      createAlbumDto.artistId,
+    );
+
+    if (!existArtist) {
+      albumTemporary.artistId = null;
+    }
+
+    return this.albumRepositoryService.create(albumTemporary);
   }
 
   async getAlbumById(id: string) {
@@ -47,9 +59,19 @@ export class AlbumService {
       );
     }
 
+    const albumTemporary = updateAlbumDto;
+
+    const existArtist = this.artistRepositoryService.getById(
+      updateAlbumDto.artistId,
+    );
+
+    if (!existArtist) {
+      albumTemporary.artistId = null;
+    }
+
     const updatedAlbum = this.albumRepositoryService.update({
       ...album,
-      ...updateAlbumDto,
+      ...albumTemporary,
     });
     return updatedAlbum;
   }

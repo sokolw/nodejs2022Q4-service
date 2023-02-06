@@ -4,18 +4,40 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { validate } from 'uuid';
 import { INVALID_ID, TRACK_NOT_EXIST } from 'src/core/constants';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Track } from './classes/track';
+import { ArtistRepositoryService } from 'src/core/repository/services/artist-repository.service';
+import { AlbumRepositoryService } from 'src/core/repository/services/album-repository.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private trackRepositoryService: TrackRepositoryService) {}
+  constructor(
+    private trackRepositoryService: TrackRepositoryService,
+    private artistRepositoryService: ArtistRepositoryService,
+    private albumRepositoryService: AlbumRepositoryService,
+  ) {}
 
   async getAllTracks() {
     return this.trackRepositoryService.getAll();
   }
 
   async createTrack(createTrackDto: CreateTrackDto) {
-    return this.trackRepositoryService.create(createTrackDto);
+    const trackTemporary = createTrackDto;
+
+    const existArtist = this.artistRepositoryService.getById(
+      createTrackDto.artistId,
+    );
+    const existAlbum = this.albumRepositoryService.getById(
+      createTrackDto.albumId,
+    );
+
+    if (!existArtist) {
+      trackTemporary.artistId = null;
+    }
+
+    if (!existAlbum) {
+      trackTemporary.albumId = null;
+    }
+
+    return this.trackRepositoryService.create(trackTemporary);
   }
 
   async getTrackById(id: string) {
@@ -44,9 +66,26 @@ export class TrackService {
       );
     }
 
+    const trackTemporary = updateTrackDto;
+
+    const existArtist = this.artistRepositoryService.getById(
+      updateTrackDto.artistId,
+    );
+    const existAlbum = this.albumRepositoryService.getById(
+      updateTrackDto.albumId,
+    );
+
+    if (!existArtist) {
+      trackTemporary.artistId = null;
+    }
+
+    if (!existAlbum) {
+      trackTemporary.albumId = null;
+    }
+
     const updatedTrack = this.trackRepositoryService.update({
       ...track,
-      ...updateTrackDto,
+      ...trackTemporary,
     });
     return updatedTrack;
   }

@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTrackDto {
@@ -16,7 +16,9 @@ export class CreateTrackDto {
     example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     format: 'uuid',
   })
-  readonly artistId: string | null;
+  @IsString()
+  @IsOptional()
+  artistId: string | null;
 
   @ApiProperty({
     description: 'Album identifier',
@@ -24,7 +26,9 @@ export class CreateTrackDto {
     example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     format: 'uuid',
   })
-  readonly albumId: string | null;
+  @IsString()
+  @IsOptional()
+  albumId: string | null;
 
   @ApiProperty({
     description: 'Track duration',
