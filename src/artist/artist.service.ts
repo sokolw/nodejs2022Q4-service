@@ -5,12 +5,14 @@ import { validate } from 'uuid';
 import { INVALID_ID, ARTIST_NOT_EXIST } from './../core/constants';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { TrackRepositoryService } from 'src/core/repository/services/track-repository.service';
+import { AlbumRepositoryService } from 'src/core/repository/services/album-repository.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
     private artistRepositoryService: ArtistRepositoryService,
     private trackRepositoryService: TrackRepositoryService,
+    private albumRepositoryService: AlbumRepositoryService,
   ) {}
 
   async getAllArtists() {
@@ -70,6 +72,7 @@ export class ArtistService {
       );
     }
     this.trackRepositoryService.clearArtistDependency(id);
+    this.albumRepositoryService.clearArtistDependency(id);
     this.artistRepositoryService.delete(id);
   }
 }

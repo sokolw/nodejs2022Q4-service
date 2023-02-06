@@ -18,4 +18,13 @@ export class AlbumRepositoryService extends Repository<Album> {
     this.data.push(newArtist);
     return { ...newArtist };
   }
+
+  clearArtistDependency(id: string): void {
+    this.data = this.data.map((item) => {
+      if (item.artistId === id) {
+        return { ...item, artistId: null };
+      }
+      return item;
+    });
+  }
 }
