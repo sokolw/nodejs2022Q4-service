@@ -1,0 +1,38 @@
+version: '3.0'
+
+services:
+  home-library:
+    image: home-library-api
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres-home-library
+    environment:
+      - POSTGRES_HOST=postgres-home-library
+    restart: always
+    networks:
+      - backend
+
+  postgres-home-library:
+    build: ./database
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+       - pgdata:/var/lib/postgresql/data
+    restart: always
+    command: ["postgres", "-c", "log_statement=all"]
+    networks:
+      - backend
+volumes:
+  pgdata:
+
+networks:
+  backend:
+    name: backend-network
