@@ -3,7 +3,7 @@ version: '3.0'
 services:
   home-library:
     image: home-library-api
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     ports:
@@ -25,13 +25,26 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-       - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     restart: always
-    command: ["postgres", "-c", "log_statement=all"]
+    command:
+      [
+        "postgres",
+        "-c",
+        "log_directory=pg_log",
+        "-c",
+        "log_filename=postgresql-%Y-%m-%d_%H%M%S.log",
+        "-c",
+        "log_statement=all",
+        "-c",
+        "logging_collector=on"
+      ]
     networks:
       - backend
+
 volumes:
   pgdata:
+
 
 networks:
   backend:
