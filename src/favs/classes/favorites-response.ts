@@ -1,6 +1,6 @@
-import { Artist } from 'src/artist/classes/artist';
-import { Album } from 'src/album/classes/album';
-import { Track } from 'src/track/classes/track';
+import { ArtistResponse } from 'src/artist/classes/artist-response';
+import { AlbumResponse } from 'src/album/classes/album-response';
+import { TrackResponse } from 'src/track/classes/track-response';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FavoritesResponse {
@@ -8,23 +8,23 @@ export class FavoritesResponse {
     description: 'Artists list',
     nullable: false,
     isArray: true,
-    type: Artist,
+    type: ArtistResponse,
   })
-  artists: Artist[];
+  artists: ArtistResponse[];
 
   @ApiProperty({
     description: 'Albums list',
     nullable: false,
     isArray: true,
-    type: Album,
+    type: AlbumResponse,
   })
-  albums: Album[];
+  albums: AlbumResponse[];
 
   @ApiProperty({
     description: 'Tracks list',
     nullable: false,
     isArray: true,
-    type: Track,
+    type: TrackResponse,
   })
-  tracks: Track[];
+  tracks: TrackResponse[];
 }
