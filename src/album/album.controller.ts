@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { Album } from './classes/album';
+import { AlbumResponse } from './classes/album-response';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { ApiTags } from '@nestjs/swagger/dist';
 import {
@@ -35,11 +35,11 @@ export class AlbumController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successful operation',
-    type: Album,
+    type: AlbumResponse,
     isArray: true,
   })
   @Get('/')
-  async getAllAlbums(): Promise<Array<Album>> {
+  async getAllAlbums(): Promise<Array<AlbumResponse>> {
     return this.albumService.getAllAlbums();
   }
 
@@ -51,7 +51,7 @@ export class AlbumController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successful operation',
-    type: Album,
+    type: AlbumResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -62,7 +62,7 @@ export class AlbumController {
     description: 'Album was not found.',
   })
   @Get('/:id')
-  async getAlbumById(@Param('id') albumId: string): Promise<Album> {
+  async getAlbumById(@Param('id') albumId: string): Promise<AlbumResponse> {
     return this.albumService.getAlbumById(albumId);
   }
 
@@ -76,7 +76,7 @@ export class AlbumController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Almub is created',
-    type: Album,
+    type: AlbumResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -85,7 +85,9 @@ export class AlbumController {
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
-  async createAlbum(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
+  async createAlbum(
+    @Body() createAlbumDto: CreateAlbumDto,
+  ): Promise<AlbumResponse> {
     return this.albumService.createAlbum(createAlbumDto);
   }
 
@@ -100,7 +102,7 @@ export class AlbumController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The album has been updated.',
-    type: Album,
+    type: AlbumResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -115,7 +117,7 @@ export class AlbumController {
   async updateAlbum(
     @Param('id') albumId: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Promise<Album> {
+  ): Promise<AlbumResponse> {
     return this.albumService.updateAlbum(albumId, updateAlbumDto);
   }
 

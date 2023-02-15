@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Album {
+export class AlbumResponse {
   @ApiProperty({
     description: 'Album identifier',
     nullable: false,

@@ -1,46 +1,74 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { AlbumRepositoryService } from 'src/core/repository/services/album-repository.service';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { validate } from 'uuid';
 import { ALBUM_NOT_EXIST, INVALID_ID } from './../core/constants';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { TrackRepositoryService } from 'src/core/repository/services/track-repository.service';
-import { ArtistRepositoryService } from 'src/core/repository/services/artist-repository.service';
+import { Repository } from 'typeorm';
+import { Album } from './album.entity';
+import { Artist } from 'src/artist/artist.entity';
+import { AlbumResponse } from './classes/album-response';
 
 @Injectable()
 export class AlbumService {
   constructor(
-    private albumRepositoryService: AlbumRepositoryService,
-    private trackRepositoryService: TrackRepositoryService,
-    private artistRepositoryService: ArtistRepositoryService,
+    @Inject('ALBUM_REPOSITORY')
+    private albumRepository: Repository<Album>,
+    @Inject('ARTIST_REPOSITORY')
+    private artistRepository: Repository<Artist>,
   ) {}
 
-  async getAllAlbums() {
-    return this.albumRepositoryService.getAll();
+  async getAllAlbums(): Promise<Array<AlbumResponse>> {
+    const albums = await this.albumRepository.find({
+      relations: {
+        artist: true,
+      },
+    });
+    return albums.map((album) => {
+      return this.transformAlbumEntity(album);
+    });
   }
 
-  async createAlbum(createAlbumDto: CreateAlbumDto) {
-    const albumTemporary = createAlbumDto;
-
-    const existArtist = this.artistRepositoryService.getById(
-      createAlbumDto.artistId,
-    );
-
-    if (!existArtist) {
-      albumTemporary.artistId = null;
+  async createAlbum(createAlbumDto: CreateAlbumDto): Promise<AlbumResponse> {
+    const album = new Album();
+    if (
+      createAlbumDto.artistId !== undefined &&
+      validate(createAlbumDto.artistId)
+    ) {
+      const artist = await this.artistRepository.findOneBy({
+        id: createAlbumDto.artistId,
+      });
+      album.artist = artist;
     }
 
-    return this.albumRepositoryService.create(albumTemporary);
+    const { id } = await this.albumRepository.save(
+      Object.assign(album, {
+        name: createAlbumDto.name,
+        year: createAlbumDto.year,
+      }),
+    );
+
+    const createdAlbum = await this.albumRepository.findOne({
+      where: { id },
+      relations: {
+        artist: true,
+      },
+    });
+    return this.transformAlbumEntity(createdAlbum);
   }
 
-  async getAlbumById(id: string) {
+  async getAlbumById(id: string): Promise<AlbumResponse> {
     if (!validate(id)) {
       throw new HttpException({ message: INVALID_ID }, HttpStatus.BAD_REQUEST);
     }
 
-    const album = this.albumRepositoryService.getById(id);
+    const album = await this.albumRepository.findOne({
+      where: { id },
+      relations: {
+        artist: true,
+      },
+    });
     if (album) {
-      return album;
+      return this.transformAlbumEntity(album);
     }
 
     throw new HttpException({ message: ALBUM_NOT_EXIST }, HttpStatus.NOT_FOUND);
@@ -51,7 +79,12 @@ export class AlbumService {
       throw new HttpException({ message: INVALID_ID }, HttpStatus.BAD_REQUEST);
     }
 
-    const album = this.albumRepositoryService.getById(id);
+    const album = await this.albumRepository.findOne({
+      where: { id },
+      relations: {
+        artist: true,
+      },
+    });
     if (album === null) {
       throw new HttpException(
         { message: ALBUM_NOT_EXIST },
@@ -59,21 +92,30 @@ export class AlbumService {
       );
     }
 
-    const albumTemporary = updateAlbumDto;
-
-    const existArtist = this.artistRepositoryService.getById(
-      updateAlbumDto.artistId,
-    );
-
-    if (!existArtist) {
-      albumTemporary.artistId = null;
+    if (
+      updateAlbumDto.artistId !== undefined &&
+      validate(updateAlbumDto.artistId)
+    ) {
+      const artist = await this.artistRepository.findOneBy({
+        id: updateAlbumDto.artistId,
+      });
+      album.artist = artist;
     }
 
-    const updatedAlbum = this.albumRepositoryService.update({
-      ...album,
-      ...albumTemporary,
+    const { id: albumId } = await this.albumRepository.save(
+      Object.assign(album, {
+        name: updateAlbumDto.name,
+        year: updateAlbumDto.year,
+      }),
+    );
+
+    const updatedAlbum = await this.albumRepository.findOne({
+      where: { id: albumId },
+      relations: {
+        artist: true,
+      },
     });
-    return updatedAlbum;
+    return this.transformAlbumEntity(updatedAlbum);
   }
 
   async deleteAlbum(id: string) {
@@ -81,7 +123,7 @@ export class AlbumService {
       throw new HttpException({ message: INVALID_ID }, HttpStatus.BAD_REQUEST);
     }
 
-    const album = this.albumRepositoryService.getById(id);
+    const album = await this.albumRepository.findOneBy({ id });
     if (album === null) {
       throw new HttpException(
         { message: ALBUM_NOT_EXIST },
@@ -89,7 +131,13 @@ export class AlbumService {
       );
     }
 
-    this.trackRepositoryService.clearAlbumDependency(id);
-    this.albumRepositoryService.delete(id);
+    await this.albumRepository.remove(album);
+  }
+
+  private transformAlbumEntity(entity: Album): AlbumResponse {
+    const artistId = entity.artist ? entity.artist.id : null;
+    delete entity.artist;
+    delete entity.isFavorite;
+    return { ...entity, artistId };
   }
 }
