@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Track } from './classes/track';
+import { TrackResponse } from './classes/track-response';
 import { TrackService } from './track.service';
 import { ApiTags } from '@nestjs/swagger/dist';
 import {
@@ -35,11 +35,11 @@ export class TrackController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successful operation',
-    type: Track,
+    type: TrackResponse,
     isArray: true,
   })
   @Get('/')
-  async getAllTracks(): Promise<Array<Track>> {
+  async getAllTracks(): Promise<Array<TrackResponse>> {
     return this.trackService.getAllTracks();
   }
 
@@ -51,7 +51,7 @@ export class TrackController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successful operation',
-    type: Track,
+    type: TrackResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -62,7 +62,7 @@ export class TrackController {
     description: 'Track not found',
   })
   @Get('/:id')
-  async getTrackById(@Param('id') trackId: string): Promise<Track> {
+  async getTrackById(@Param('id') trackId: string): Promise<TrackResponse> {
     return this.trackService.getTrackById(trackId);
   }
 
@@ -76,7 +76,7 @@ export class TrackController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Successful operation',
-    type: Track,
+    type: TrackResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -85,7 +85,9 @@ export class TrackController {
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
-  async createTrack(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
+  async createTrack(
+    @Body() createTrackDto: CreateTrackDto,
+  ): Promise<TrackResponse> {
     return this.trackService.createTrack(createTrackDto);
   }
 
@@ -100,7 +102,7 @@ export class TrackController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The track has been updated.',
-    type: Track,
+    type: TrackResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -115,7 +117,7 @@ export class TrackController {
   async updateTrack(
     @Param('id') trackId: string,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Promise<Track> {
+  ): Promise<TrackResponse> {
     return this.trackService.updateTrack(trackId, updateTrackDto);
   }
 

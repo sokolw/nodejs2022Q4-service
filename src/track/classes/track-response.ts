@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Track {
+export class TrackResponse {
   @ApiProperty({
     description: 'Track identifier',
     nullable: false,
