@@ -14,7 +14,7 @@ import {
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { Artist } from './classes/artist';
+import { ArtistResponse } from './classes/artist-response';
 import { ApiTags } from '@nestjs/swagger/dist';
 import {
   ApiOperation,
@@ -35,11 +35,11 @@ export class ArtistController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successful operation',
-    type: Artist,
+    type: ArtistResponse,
     isArray: true,
   })
   @Get('/')
-  async getAllArtists(): Promise<Array<Artist>> {
+  async getAllArtists(): Promise<Array<ArtistResponse>> {
     return this.artistService.getAllArtists();
   }
 
@@ -51,7 +51,7 @@ export class ArtistController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successful operation',
-    type: Artist,
+    type: ArtistResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -62,7 +62,7 @@ export class ArtistController {
     description: 'Artist not found',
   })
   @Get('/:id')
-  async getArtistById(@Param('id') artistId: string): Promise<Artist> {
+  async getArtistById(@Param('id') artistId: string): Promise<ArtistResponse> {
     return this.artistService.getArtistById(artistId);
   }
 
@@ -76,7 +76,7 @@ export class ArtistController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Successful operation',
-    type: Artist,
+    type: ArtistResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -87,7 +87,7 @@ export class ArtistController {
   @UsePipes(new ValidationPipe())
   async createArtist(
     @Body() createArtistDto: CreateArtistDto,
-  ): Promise<Artist> {
+  ): Promise<ArtistResponse> {
     return this.artistService.createArtist(createArtistDto);
   }
 
@@ -102,7 +102,7 @@ export class ArtistController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The artist has been updated.',
-    type: Artist,
+    type: ArtistResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -117,7 +117,7 @@ export class ArtistController {
   async updateArtist(
     @Param('id') artistId: string,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Promise<Artist> {
+  ): Promise<ArtistResponse> {
     return this.artistService.updateArtist(artistId, updateArtistDto);
   }
 

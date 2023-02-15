@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Artist {
+export class ArtistResponse {
   @ApiProperty({
     description: 'Artist identifier',
     nullable: false,
