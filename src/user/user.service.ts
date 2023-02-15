@@ -1,25 +1,28 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { compare, hash } from 'bcrypt';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { compare } from 'bcrypt';
 import {
   INVALID_ID,
   LOGIN_EXIST,
   OLD_PASSWORD_WRONG,
   USER_NOT_EXIST,
 } from 'src/core/constants';
-import { UserRepositoryService } from 'src/core/repository/services/user-repository.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './interfaces/user.interface';
 import { UserResponse } from './classes/user-response';
 import { validate } from 'uuid';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepositoryService: UserRepositoryService) {}
+  constructor(
+    @Inject('USER_REPOSITORY')
+    private userRepository: Repository<User>,
+  ) {}
 
   async getAllUsers(): Promise<Array<UserResponse>> {
-    const users = this.userRepositoryService.getAll();
-    return this.buildUserResponse(users) as Promise<Array<UserResponse>>;
+    const users = await this.userRepository.find();
+    return users.map((user) => this.transformUserEntity(user));
   }
 
   async getUserById(id: string): Promise<UserResponse> {
@@ -27,28 +30,22 @@ export class UserService {
       throw new HttpException({ message: INVALID_ID }, HttpStatus.BAD_REQUEST);
     }
 
-    const user = this.userRepositoryService.getById(id);
+    const user = await this.userRepository.findOneBy({ id });
     if (user) {
-      return this.buildUserResponse(user) as Promise<UserResponse>;
+      return this.transformUserEntity(user);
     }
 
     throw new HttpException({ message: USER_NOT_EXIST }, HttpStatus.NOT_FOUND);
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserResponse> {
-    const existUser = this.userRepositoryService.getByLogin(
-      createUserDto.login,
-    );
-    if (existUser) {
+    try {
+      const user = Object.assign(new User(), createUserDto);
+      const createdUser = await this.userRepository.save(user);
+      return this.transformUserEntity(createdUser);
+    } catch {
       throw new HttpException({ message: LOGIN_EXIST }, HttpStatus.CONFLICT);
     }
-
-    const passwordHash = await this.getPasswordHash(createUserDto.password);
-    const createdUser = this.userRepositoryService.create({
-      ...createUserDto,
-      password: passwordHash,
-    });
-    return this.buildUserResponse(createdUser) as Promise<UserResponse>;
   }
 
   async updateUserPassword(
@@ -59,7 +56,7 @@ export class UserService {
       throw new HttpException({ message: INVALID_ID }, HttpStatus.BAD_REQUEST);
     }
 
-    const user = this.userRepositoryService.getById(id);
+    const user = await this.userRepository.findOneBy({ id });
     if (user === null) {
       throw new HttpException(
         { message: USER_NOT_EXIST },
@@ -79,51 +76,33 @@ export class UserService {
       );
     }
 
-    const newPasswordHash = await this.getPasswordHash(
-      updatePasswordDto.newPassword,
+    const updatedUser = await this.userRepository.save(
+      Object.assign(user, { password: updatePasswordDto.newPassword }),
     );
-    const updatedUser: User = {
-      ...user,
-      version: ++user.version,
-      updatedAt: Date.now(),
-      password: newPasswordHash,
-    };
 
-    const userAfterUpdate = this.userRepositoryService.update(updatedUser);
-    return this.buildUserResponse(userAfterUpdate) as Promise<UserResponse>;
+    return this.transformUserEntity(updatedUser);
   }
 
   async deleteUser(id: string): Promise<void> {
     if (!validate(id)) {
       throw new HttpException({ message: INVALID_ID }, HttpStatus.BAD_REQUEST);
     }
-
-    const user = this.userRepositoryService.getById(id);
+    const user = await this.userRepository.findOneBy({ id });
     if (user === null) {
       throw new HttpException(
         { message: USER_NOT_EXIST },
         HttpStatus.NOT_FOUND,
       );
     }
-
-    this.userRepositoryService.delete(id);
+    await this.userRepository.remove(user);
   }
 
-  async getPasswordHash(password: string): Promise<string> {
-    return hash(password, +process.env.CRYPT_SALT);
-  }
-
-  async buildUserResponse(
-    args: User | Array<User>,
-  ): Promise<UserResponse | Array<UserResponse>> {
-    if (Array.isArray(args)) {
-      return args.map<UserResponse>((user) => {
-        delete user.password;
-        return { ...user };
-      });
-    } else {
-      delete args.password;
-      return args;
-    }
+  private transformUserEntity(entity: User): UserResponse {
+    delete entity.password;
+    return {
+      ...entity,
+      createdAt: +entity.createdAt,
+      updatedAt: +entity.updatedAt,
+    };
   }
 }
