@@ -24,7 +24,7 @@ export class TrackService {
     const tracks = await this.trackRepository.find({
       relations: { album: true, artist: true },
     });
-    return tracks.map((track) => this.transformTrackEntity(track));
+    return tracks.map((track) => TrackService.transformTrackEntity(track));
   }
 
   async createTrack(createTrackDto: CreateTrackDto): Promise<TrackResponse> {
@@ -61,7 +61,7 @@ export class TrackService {
       relations: { album: true, artist: true },
     });
 
-    return this.transformTrackEntity(createdTrack);
+    return TrackService.transformTrackEntity(createdTrack);
   }
 
   async getTrackById(id: string): Promise<TrackResponse> {
@@ -74,7 +74,7 @@ export class TrackService {
       relations: { album: true, artist: true },
     });
     if (track) {
-      return this.transformTrackEntity(track);
+      return TrackService.transformTrackEntity(track);
     }
 
     throw new HttpException({ message: TRACK_NOT_EXIST }, HttpStatus.NOT_FOUND);
@@ -131,7 +131,7 @@ export class TrackService {
       },
     });
 
-    return this.transformTrackEntity(updatedTrack);
+    return TrackService.transformTrackEntity(updatedTrack);
   }
 
   async deleteTrack(id: string): Promise<void> {
@@ -150,7 +150,7 @@ export class TrackService {
     await this.trackRepository.remove(track);
   }
 
-  private transformTrackEntity(entity: Track): TrackResponse {
+  static transformTrackEntity(entity: Track): TrackResponse {
     const artistId = entity.artist ? entity.artist.id : null;
     const albumId = entity.album ? entity.album.id : null;
     delete entity.artist;

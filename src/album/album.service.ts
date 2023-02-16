@@ -24,7 +24,7 @@ export class AlbumService {
       },
     });
     return albums.map((album) => {
-      return this.transformAlbumEntity(album);
+      return AlbumService.transformAlbumEntity(album);
     });
   }
 
@@ -53,7 +53,7 @@ export class AlbumService {
         artist: true,
       },
     });
-    return this.transformAlbumEntity(createdAlbum);
+    return AlbumService.transformAlbumEntity(createdAlbum);
   }
 
   async getAlbumById(id: string): Promise<AlbumResponse> {
@@ -68,7 +68,7 @@ export class AlbumService {
       },
     });
     if (album) {
-      return this.transformAlbumEntity(album);
+      return AlbumService.transformAlbumEntity(album);
     }
 
     throw new HttpException({ message: ALBUM_NOT_EXIST }, HttpStatus.NOT_FOUND);
@@ -115,7 +115,7 @@ export class AlbumService {
         artist: true,
       },
     });
-    return this.transformAlbumEntity(updatedAlbum);
+    return AlbumService.transformAlbumEntity(updatedAlbum);
   }
 
   async deleteAlbum(id: string) {
@@ -134,7 +134,7 @@ export class AlbumService {
     await this.albumRepository.remove(album);
   }
 
-  private transformAlbumEntity(entity: Album): AlbumResponse {
+  static transformAlbumEntity(entity: Album): AlbumResponse {
     const artistId = entity.artist ? entity.artist.id : null;
     delete entity.artist;
     delete entity.isFavorite;

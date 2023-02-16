@@ -16,14 +16,14 @@ export class ArtistService {
 
   async getAllArtists(): Promise<Array<ArtistResponse>> {
     const artists = await this.artistRepository.find();
-    return artists.map((artist) => this.transformArtistEntity(artist));
+    return artists.map((artist) => ArtistService.transformArtistEntity(artist));
   }
 
   async createArtist(createArtistDto: CreateArtistDto) {
     const createdArtist = await this.artistRepository.save(
       Object.assign(new Artist(), createArtistDto),
     );
-    return this.transformArtistEntity(createdArtist);
+    return ArtistService.transformArtistEntity(createdArtist);
   }
 
   async getArtistById(id: string) {
@@ -33,7 +33,7 @@ export class ArtistService {
 
     const artist = await this.artistRepository.findOneBy({ id });
     if (artist) {
-      return this.transformArtistEntity(artist);
+      return ArtistService.transformArtistEntity(artist);
     }
 
     throw new HttpException(
@@ -58,7 +58,7 @@ export class ArtistService {
     const updatedArtist = await this.artistRepository.save(
       Object.assign(artist, updateArtistDto),
     );
-    return this.transformArtistEntity(updatedArtist);
+    return ArtistService.transformArtistEntity(updatedArtist);
   }
 
   async deleteArtist(id: string) {
@@ -76,7 +76,7 @@ export class ArtistService {
     await this.artistRepository.remove(artist);
   }
 
-  private transformArtistEntity(entity: Artist): ArtistResponse {
+  static transformArtistEntity(entity: Artist): ArtistResponse {
     delete entity.isFavorite;
     return { ...entity };
   }
