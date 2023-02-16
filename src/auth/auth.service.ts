@@ -2,12 +2,16 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { INVALID_LOGIN_PASSWORD, LOGIN_EXIST } from 'src/core/constants';
-import { UserRepositoryService } from 'src/core/repository/services/user-repository.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/interfaces/user.interface';
 import { UserResponse } from 'src/user/classes/user-response';
 import { JwtResponse } from './types/jwt-response';
 import { UserService } from './../user/user.service';
+
+abstract class UserRepositoryService {
+  abstract getById(id: string);
+  abstract getByLogin(login: string);
+}
 
 @Injectable()
 export class AuthService {

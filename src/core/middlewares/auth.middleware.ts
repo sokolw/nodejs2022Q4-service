@@ -1,9 +1,12 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
-import { UserRepositoryService } from '../repository/services/user-repository.service';
 import { DecodedUser } from './types/decoded-user';
 import { UserRequest } from './types/user-request';
+
+abstract class UserRepositoryService {
+  abstract getById(id: string);
+}
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
