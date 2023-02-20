@@ -24,7 +24,4 @@ export class Track {
     nullable: true,
   })
   album: Album;
-
-  @Column({ default: false })
-  isFavorite: boolean;
 }

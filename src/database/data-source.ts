@@ -4,6 +4,7 @@ import { Track } from 'src/track/track.entity';
 import { User } from 'src/user/user.entity';
 import { DataSource } from 'typeorm';
 import 'dotenv/config';
+import { Favorites } from 'src/favs/favs.entity';
 
 const isNestApp =
   process.env.npm_lifecycle_script.includes('nest') ||
@@ -22,7 +23,7 @@ const dataSource = (async () =>
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    entities: [User, Artist, Album, Track],
+    entities: [User, Artist, Album, Track, Favorites],
     synchronize: false,
     migrationsRun: false,
     migrations: !isNestApp ? await migrationsImporterWrapper() : [],

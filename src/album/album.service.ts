@@ -137,7 +137,6 @@ export class AlbumService {
   static transformAlbumEntity(entity: Album): AlbumResponse {
     const artistId = entity.artist ? entity.artist.id : null;
     delete entity.artist;
-    delete entity.isFavorite;
     return { ...entity, artistId };
   }
 }

@@ -77,7 +77,6 @@ export class ArtistService {
   }
 
   static transformArtistEntity(entity: Artist): ArtistResponse {
-    delete entity.isFavorite;
     return { ...entity };
   }
 }

@@ -5,6 +5,7 @@ import { CoreModule } from 'src/core/core.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { trackProviders } from 'src/track/track.providers';
 import { FavsController } from './favs.controller';
+import { favsProviders } from './favs.providers';
 import { FavsService } from './favs.service';
 
 @Module({
@@ -14,6 +15,7 @@ import { FavsService } from './favs.service';
     ...trackProviders,
     ...albumProviders,
     ...artistProviders,
+    ...favsProviders,
     FavsService,
   ],
 })

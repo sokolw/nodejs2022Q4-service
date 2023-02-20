@@ -155,7 +155,6 @@ export class TrackService {
     const albumId = entity.album ? entity.album.id : null;
     delete entity.artist;
     delete entity.album;
-    delete entity.isFavorite;
     return { ...entity, artistId, albumId };
   }
 }
