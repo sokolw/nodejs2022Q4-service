@@ -10,4 +10,4 @@ RUN npm install
 
 COPY . .
 
-CMD [ "npm", "run", "start"]
+CMD  npm run typeorm:gen; npm run typeorm:up; npm run start

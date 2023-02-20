@@ -8,5 +8,4 @@ services:
     ports:
       - ${PORT}:${PORT}
     volumes:
-     - ./tmp/npm:/root/.npm:z
      - ./src:/usr/app/src:z

@@ -1,22 +1,25 @@
 version: '3.0'
 
 services:
-  home-library:
-    image: home-library-api
+  home-library-api:
+    image: sokolw/nodejs2022q4:home-library-api
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      - postgres-home-library
+      - home-library-postgres
     environment:
-      - POSTGRES_HOST=postgres-home-library
+      - POSTGRES_HOST=home-library-postgres
+    volumes:
+      - migrations:/usr/app/migrations
     restart: always
     networks:
       - backend
 
-  postgres-home-library:
+  home-library-postgres:
+    image: sokolw/nodejs2022q4:home-library-postgres
     build: ./database
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
@@ -44,6 +47,7 @@ services:
 
 volumes:
   pgdata:
+  migrations:
 
 
 networks:
