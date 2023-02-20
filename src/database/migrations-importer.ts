@@ -8,7 +8,7 @@ const createListMigrations = async () => {
     withFileTypes: true,
   });
   for (const file of files) {
-    if (file.isFile()) {
+    if (file.isFile() && file.name !== '.gitkeep') {
       result.push(
         await import(join(__dirname, '/../../migrations', file.name)),
       );
