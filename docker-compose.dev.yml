@@ -1,0 +1,11 @@
+version: '3.0'
+
+services:
+  home-library-api:
+    build: 
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+     - ./src:/usr/app/src:z

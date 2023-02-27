@@ -1,0 +1,55 @@
+version: '3.0'
+
+services:
+  home-library-api:
+    image: sokolw/nodejs2022q4:home-library-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - home-library-postgres
+    environment:
+      - POSTGRES_HOST=home-library-postgres
+    volumes:
+      - migrations:/usr/app/migrations
+    restart: always
+    networks:
+      - backend
+
+  home-library-postgres:
+    image: sokolw/nodejs2022q4:home-library-postgres
+    build: ./database
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    command:
+      [
+        "postgres",
+        "-c",
+        "log_directory=pg_log",
+        "-c",
+        "log_filename=postgresql-%Y-%m-%d_%H%M%S.log",
+        "-c",
+        "log_statement=all",
+        "-c",
+        "logging_collector=on"
+      ]
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+  migrations:
+
+
+networks:
+  backend:
+    name: backend-network
