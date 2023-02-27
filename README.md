@@ -106,7 +106,7 @@ npm run test:auth -- --runInBand
 To run only one of all test suites
 
 ```
-npm run test -- <path to suite>
+npm run test:auth -- <path to suite>
 ```
 
 ### Auto-fix and format
