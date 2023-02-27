@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
 import { ApiTags } from '@nestjs/swagger/dist';
@@ -13,10 +14,14 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger/dist/decorators';
 import { FavoritesResponse } from './classes/favorites-response';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 
 @ApiTags('Favorites')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('favs')
 export class FavsController {
   constructor(private favsService: FavsService) {}
@@ -29,6 +34,10 @@ export class FavsController {
     status: HttpStatus.OK,
     description: 'Successful operation',
     type: FavoritesResponse,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Get('/')
   async getAllFavs(): Promise<FavoritesResponse> {
@@ -51,6 +60,10 @@ export class FavsController {
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: "Track with id doesn't exist.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Post('/track/:id')
   @HttpCode(HttpStatus.CREATED)
@@ -75,6 +88,10 @@ export class FavsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Track was not found.',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Delete('/track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTrack(@Param('id') trackId: string) {
@@ -97,6 +114,10 @@ export class FavsController {
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: "Album with id doesn't exist.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Post('/album/:id')
   @HttpCode(HttpStatus.CREATED)
@@ -121,6 +142,10 @@ export class FavsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album was not found.',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Delete('/album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAlbum(@Param('id') albumId: string) {
@@ -144,6 +169,10 @@ export class FavsController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: "Artist with id doesn't exist.",
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Post('/artist/:id')
   @HttpCode(HttpStatus.CREATED)
   async addArtist(@Param('id') artistId: string): Promise<void> {
@@ -166,6 +195,10 @@ export class FavsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Artist was not found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Delete('/artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)

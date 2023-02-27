@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -21,9 +22,13 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger/dist/decorators';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 
 @ApiTags('Artist')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private artistService: ArtistService) {}
@@ -37,6 +42,10 @@ export class ArtistController {
     description: 'Successful operation',
     type: ArtistResponse,
     isArray: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Get('/')
   async getAllArtists(): Promise<Array<ArtistResponse>> {
@@ -61,6 +70,10 @@ export class ArtistController {
     status: HttpStatus.NOT_FOUND,
     description: 'Artist not found',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Get('/:id')
   async getArtistById(@Param('id') artistId: string): Promise<ArtistResponse> {
     return this.artistService.getArtistById(artistId);
@@ -81,6 +94,10 @@ export class ArtistController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. body does not contain required fields',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
@@ -112,6 +129,10 @@ export class ArtistController {
     status: HttpStatus.NOT_FOUND,
     description: 'Artist was not found.',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Put('/:id')
   @UsePipes(new ValidationPipe())
   async updateArtist(
@@ -137,6 +158,10 @@ export class ArtistController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Artist was not found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)

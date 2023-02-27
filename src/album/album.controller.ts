@@ -10,6 +10,7 @@ import {
   Body,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -21,9 +22,13 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger/dist/decorators';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 
 @ApiTags('Album')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('album')
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
@@ -37,6 +42,10 @@ export class AlbumController {
     description: 'Successful operation',
     type: AlbumResponse,
     isArray: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Get('/')
   async getAllAlbums(): Promise<Array<AlbumResponse>> {
@@ -61,6 +70,10 @@ export class AlbumController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album was not found.',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Get('/:id')
   async getAlbumById(@Param('id') albumId: string): Promise<AlbumResponse> {
     return this.albumService.getAlbumById(albumId);
@@ -81,6 +94,10 @@ export class AlbumController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. body does not contain required fields',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
@@ -112,6 +129,10 @@ export class AlbumController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album was not found.',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Put('/:id')
   @UsePipes(new ValidationPipe())
   async updateAlbum(
@@ -137,6 +158,10 @@ export class AlbumController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Album was not found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
