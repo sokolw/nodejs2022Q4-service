@@ -96,7 +96,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Bad request.',
+    description: 'Bad request. (refreshToken field is required)',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
