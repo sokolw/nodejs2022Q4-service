@@ -6,9 +6,14 @@ import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { CoreModule } from './core/core.module';
 import { LoggerMiddleware } from './core/middlewares/logger.middleware';
+import { HttpExceptionFilter } from './core/filters/http-exception.filter';
+import { APP_FILTER } from '@nestjs/core';
+import { AuthMiddleware } from './core/middlewares/auth.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UserModule,
     TrackModule,
     ArtistModule,
@@ -17,10 +22,10 @@ import { LoggerMiddleware } from './core/middlewares/logger.middleware';
     CoreModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
   }
 }
