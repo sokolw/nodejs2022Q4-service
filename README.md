@@ -72,10 +72,10 @@ then the field in the created object will be nulled.
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
+To run all tests with authorization
 
 ```
-npm run test
+npm run test:auth -- --runInBand
 ```
 
 To run only one of all test suites
