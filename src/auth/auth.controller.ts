@@ -104,7 +104,8 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Access token is missing or invalid',
+    description:
+      'RefreshToken in body  is missing or invalid. Access token is missing or invalid.',
   })
   @Post('/refresh')
   @ApiBearerAuth()
