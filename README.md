@@ -68,6 +68,31 @@ in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 - If a non-existent identifier is specified when creating a `track` or `album`, 
 then the field in the created object will be nulled.
 
+## Logs
+
+- Уровни логирования, каждый следующий уровень включает предыдущие.
+  | Level | 1 | 2 | 3 | 4 | 5 |
+  |---|:---:|:---:|:---:|:---:|:---:|
+  | Logs | log | error | warn | debug | verbose |
+
+- Логи пишутся по стуктуре ниже и делятся в зависимости от максимального размера файла.
+  ```bash
+  .
+  ├── logs
+  │   ├── 2023-02-26
+  │   │   ├──────────2023-02-27-1.log
+  │   │   └──────────2023-02-27-n.log
+  │   ├── XXXX-XX-XX
+  │   │   ├──────────XXXX-XX-XX-N.log
+  │   │   └──────────XXXX-XX-XX-N.log
+  │   └── critical_errors.log
+  │
+  └── src...
+  ```
+
+- Все уровни логирования пишутся в файл `XXXX-XX-XX-N.log` в зависимости от выбранного уровня.
+- Критические ошибки из-за которых упало приложение в `critical_errors.log`
+
 ## Testing
 
 After application running open new terminal and enter:
@@ -99,3 +124,6 @@ npm run format
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+
+
