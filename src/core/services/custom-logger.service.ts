@@ -16,43 +16,51 @@ export class CustomLoggerService implements LoggerService {
     );
   }
 
-  log(message: any, ...optionalParams: any[]) {
+  async log(message: any, ...optionalParams: any[]) {
     if (!this.isLevelEnabled(LogLevel.LOG)) {
       return;
     }
     const wrapped = this.logsWrapper(LogLevel.LOG, message);
+    await this.logsToFileService.write(wrapped);
     console.log(wrapped);
   }
 
-  error(message: any, ...optionalParams: any[]) {
+  async error(message: any, ...optionalParams: any[]) {
     if (!this.isLevelEnabled(LogLevel.ERROR)) {
       return;
     }
-    const wrapped = this.logsWrapper(LogLevel.ERROR, message);
+    const wrapped = this.logsWrapper(
+      LogLevel.ERROR,
+      `${message} ${optionalParams.join('')}`,
+    );
+    await this.logsToFileService.write(wrapped);
     console.log(wrapped);
   }
 
-  warn(message: any, ...optionalParams: any[]) {
+  async warn(message: any, ...optionalParams: any[]) {
     if (!this.isLevelEnabled(LogLevel.WARN)) {
       return;
     }
     const wrapped = this.logsWrapper(LogLevel.WARN, message);
+    await this.logsToFileService.write(wrapped);
     console.log(wrapped);
   }
 
-  debug?(message: any, ...optionalParams: any[]) {
+  async debug?(message: any, ...optionalParams: any[]) {
     if (!this.isLevelEnabled(LogLevel.DEBUG)) {
       return;
     }
     const wrapped = this.logsWrapper(LogLevel.DEBUG, message);
+    await this.logsToFileService.write(wrapped);
     console.log(wrapped);
   }
 
-  verbose?(message: any, ...optionalParams: any[]) {
+  async verbose?(message: any, ...optionalParams: any[]) {
     if (!this.isLevelEnabled(LogLevel.VERBOSE)) {
       return;
     }
     const wrapped = this.logsWrapper(LogLevel.VERBOSE, message);
+    await this.logsToFileService.write(wrapped);
     console.log(wrapped);
   }
 
