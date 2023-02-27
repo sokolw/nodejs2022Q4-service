@@ -1,18 +1,19 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
+import { User } from 'src/user/user.entity';
+import { Repository } from 'typeorm';
 import { DecodedUser } from './types/decoded-user';
 import { UserRequest } from './types/user-request';
 
-abstract class UserRepositoryService {
-  abstract getById(id: string);
-}
-
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(private userRepositoryService: UserRepositoryService) {}
+  constructor(
+    @Inject('USER_REPOSITORY')
+    private userRepository: Repository<User>,
+  ) {}
 
-  use(req: UserRequest, res: Response, next: NextFunction) {
+  async use(req: UserRequest, res: Response, next: NextFunction) {
     try {
       if (!req.headers.authorization) {
         req.user = null;
@@ -24,7 +25,9 @@ export class AuthMiddleware implements NestMiddleware {
           token,
           process.env.JWT_SECRET_KEY,
         ) as DecodedUser;
-        const user = this.userRepositoryService.getById(decodedUser.id);
+        const user = await this.userRepository.findOneBy({
+          id: decodedUser.id,
+        });
         if (user) {
           req.user = user;
           next();
