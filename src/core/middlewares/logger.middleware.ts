@@ -9,10 +9,12 @@ export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const start = Date.now();
     res.on('finish', () => {
-      const { method, originalUrl, body } = req;
+      const { method, originalUrl, body, query } = req;
       const { statusCode, statusMessage } = res;
       const timePassed = Date.now() - start;
-      const message = `[HTTP] METHOD:${method} URL:${originalUrl} CODE:${statusCode} MESSAGE:${statusMessage} BODY:${JSON.stringify(
+      const message = `[HTTP] METHOD:${method} URL:${originalUrl} QUERY:${JSON.stringify(
+        query,
+      )} STATUS_CODE:${statusCode} MESSAGE:${statusMessage} BODY_REQ:${JSON.stringify(
         body,
       )} ${timePassed}ms`;
 
@@ -30,12 +32,3 @@ export class LoggerMiddleware implements NestMiddleware {
     next();
   }
 }
-
-// const startDate = Date.now();
-// response.on('finish', () => {
-//   const duration = Date.now() - startDate;
-//   const { method, originalUrl, body } = request;
-//   const { statusCode, statusMessage } = response;
-//   const bodyData = Object.keys(body).length ? JSON.stringify(body) : '';
-//   const message = `${method.toUpperCase()} ${originalUrl} ${bodyData} ${statusCode} ${statusMessage} ${duration}ms`;
-//   console.log(message);
