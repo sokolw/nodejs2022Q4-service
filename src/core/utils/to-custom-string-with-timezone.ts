@@ -1,6 +1,4 @@
-const pad = (n: number) => {
-  return n < 10 ? '0' + n : n;
-};
+import { pad } from './pad';
 
 export const toCustomStringWithTimezone = (date: Date) => {
   const timezoneOffset = -date.getTimezoneOffset();
