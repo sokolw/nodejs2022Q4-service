@@ -40,10 +40,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         (exception as Error).stack,
       );
     } else if (httpStatus >= 400) {
-      this.customLoggerService.warn(
-        (exception as Error).message,
-        (exception as Error).stack,
-      );
+      this.customLoggerService.warn((exception as Error).message);
     }
 
     httpAdapter.reply(response, responseBody, httpStatus);
