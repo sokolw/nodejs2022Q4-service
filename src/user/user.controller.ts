@@ -10,9 +10,11 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger/dist';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -22,8 +24,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserResponse } from './classes/user-response';
 import { UserService } from './user.service';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 
 @ApiTags('User')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller()
 export class UserController {
   constructor(private userService: UserService) {}
@@ -34,6 +39,10 @@ export class UserController {
     description: 'Successful operation',
     type: UserResponse,
     isArray: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Get('/user')
   async getAllUsers(): Promise<Array<UserResponse>> {
@@ -57,6 +66,10 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'User not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Get('/user/:id')
   async getUserById(@Param('id') userId: string): Promise<UserResponse> {
@@ -82,6 +95,10 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.CONFLICT,
     description: 'Conflict. Login already exists',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Post('/user')
   @UsePipes(new ValidationPipe())
@@ -116,6 +133,10 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: 'User not found',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
+  })
   @Put('/user/:id')
   @UsePipes(new ValidationPipe())
   async updateUserPassword(
@@ -141,6 +162,10 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'User not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Access token is missing or invalid',
   })
   @Delete('/user/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
