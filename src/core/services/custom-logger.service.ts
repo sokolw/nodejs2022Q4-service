@@ -16,7 +16,7 @@ export class CustomLoggerService implements LoggerService {
     );
   }
 
-  async log(message: any, ...optionalParams: any[]) {
+  async log(message: any) {
     if (!this.isLevelEnabled(LogLevel.LOG)) {
       return;
     }
@@ -37,7 +37,7 @@ export class CustomLoggerService implements LoggerService {
     console.log(wrapped);
   }
 
-  async warn(message: any, ...optionalParams: any[]) {
+  async warn(message: any) {
     if (!this.isLevelEnabled(LogLevel.WARN)) {
       return;
     }
@@ -46,7 +46,7 @@ export class CustomLoggerService implements LoggerService {
     console.log(wrapped);
   }
 
-  async debug?(message: any, ...optionalParams: any[]) {
+  async debug?(message: any) {
     if (!this.isLevelEnabled(LogLevel.DEBUG)) {
       return;
     }
@@ -55,7 +55,7 @@ export class CustomLoggerService implements LoggerService {
     console.log(wrapped);
   }
 
-  async verbose?(message: any, ...optionalParams: any[]) {
+  async verbose?(message: any) {
     if (!this.isLevelEnabled(LogLevel.VERBOSE)) {
       return;
     }
