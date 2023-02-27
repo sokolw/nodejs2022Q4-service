@@ -1,1 +1,1 @@
-export type JwtResponse = { accessToken: string };
+export type JwtResponse = { accessToken: string; refreshToken: string };

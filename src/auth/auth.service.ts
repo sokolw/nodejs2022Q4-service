@@ -1,38 +1,36 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { compare, hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { compare } from 'bcrypt';
+import { sign, verify } from 'jsonwebtoken';
 import { INVALID_LOGIN_PASSWORD, LOGIN_EXIST } from 'src/core/constants';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { User } from 'src/user/interfaces/user.interface';
-import { UserResponse } from 'src/user/classes/user-response';
 import { JwtResponse } from './types/jwt-response';
-import { UserService } from './../user/user.service';
-
-abstract class UserRepositoryService {
-  abstract getById(id: string);
-  abstract getByLogin(login: string);
-}
+import { Repository } from 'typeorm';
+import { SignupResponse } from './types/signup-response';
+import { User } from 'src/user/user.entity';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { DecodedUser } from 'src/core/middlewares/types/decoded-user';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userRepositoryService: UserRepositoryService,
-    private userService: UserService,
+    @Inject('USER_REPOSITORY')
+    private userRepository: Repository<User>,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<void> {
-    const existUser = this.userRepositoryService.getByLogin(
-      createUserDto.login,
-    );
-    if (existUser) {
+  async signup(createUserDto: CreateUserDto): Promise<SignupResponse> {
+    try {
+      const user = Object.assign(new User(), createUserDto);
+      const createdUser = await this.userRepository.save(user);
+      return { id: createdUser.id };
+    } catch {
       throw new HttpException({ message: LOGIN_EXIST }, HttpStatus.CONFLICT);
     }
-
-    this.userService.createUser(createUserDto);
   }
 
   async login(loginUserDto: CreateUserDto): Promise<JwtResponse> {
-    const existUser = this.userRepositoryService.getByLogin(loginUserDto.login);
+    const existUser = await this.userRepository.findOneBy({
+      login: loginUserDto.login,
+    });
     if (!existUser) {
       throw new HttpException(
         { message: INVALID_LOGIN_PASSWORD },
@@ -51,32 +49,53 @@ export class AuthService {
       );
     }
 
-    const token = sign(
-      {
-        id: existUser.id,
-        login: existUser.login,
-      },
+    const userPayload = {
+      id: existUser.id,
+      login: existUser.login,
+    };
+
+    const accessToken = this.createToken(
+      userPayload,
       process.env.JWT_SECRET_KEY,
+      process.env.TOKEN_EXPIRE_TIME,
     );
 
-    return { accessToken: token };
+    const refreshToken = this.createToken(
+      userPayload,
+      process.env.JWT_SECRET_REFRESH_KEY,
+      process.env.TOKEN_REFRESH_EXPIRE_TIME,
+    );
+
+    return { accessToken, refreshToken };
   }
 
-  async getPasswordHash(password: string): Promise<string> {
-    return hash(password, +process.env.CRYPT_SALT);
+  async refresh(refreshTokenDto: RefreshTokenDto): Promise<JwtResponse> {
+    const decodedUser = verify(
+      refreshTokenDto.refreshToken,
+      process.env.JWT_SECRET_REFRESH_KEY,
+    ) as DecodedUser;
+
+    const userPayload = {
+      id: decodedUser.id,
+      login: decodedUser.login,
+    };
+
+    const accessToken = this.createToken(
+      userPayload,
+      process.env.JWT_SECRET_KEY,
+      process.env.TOKEN_EXPIRE_TIME,
+    );
+
+    const refreshToken = this.createToken(
+      userPayload,
+      process.env.JWT_SECRET_REFRESH_KEY,
+      process.env.TOKEN_REFRESH_EXPIRE_TIME,
+    );
+
+    return { accessToken, refreshToken };
   }
 
-  async buildUserResponse(
-    args: User | Array<User>,
-  ): Promise<UserResponse | Array<UserResponse>> {
-    if (Array.isArray(args)) {
-      return args.map<UserResponse>((user) => {
-        delete user.password;
-        return { ...user };
-      });
-    } else {
-      delete args.password;
-      return args;
-    }
+  createToken(payload: object, secret: string, expireTime: string): string {
+    return sign(payload, secret, { expiresIn: expireTime });
   }
 }
